@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Corpus (licensed for research, not redistribution) -- see README "Get the data"
+data/raw/
+
+# Training result files (large binaries, regenerate via train_*.py)
+data/processed/*_result.pt
+
+# Third-party pretrained weights -- see README "Model 2 setup"
+models/*.pth
+
+# Background training logs
+*.log
+
+# Windows/WSL download metadata
+*:Zone.Identifier
