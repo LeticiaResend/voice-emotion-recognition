@@ -193,20 +193,40 @@ After clicking **Analyze emotion**, the application:
 3. displays the probabilities for all seven emotion classes;
 4. generates and displays the corresponding Mel-spectrogram.
 
-Run the application locally with:
+## Running the application locally
 
+To run the application locally, first activate the virtual environment and make sure the dependencies are installed.
+
+On Windows:
+```bash
+venv\Scripts\activate
+pip install -r requirements.txt
+```
+On Linux/macOS:
+```bash
+source venv/bin/activate
+pip install -r requirements.txt
+```
+Then, from the root directory of the repository, run:
 ```bash
 python app/app.py
 ```
-## Temporary public link
+The application will normally be available locally at:
+http://127.0.0.1:7860
 
-The web application uses Gradio with `share=True`, which generates a temporary public URL when the app is launched.
+## Permanent deployment
+The application is permanently deployed on Render and can be accessed at:
+https://voice-emotion-recognition-s92d.onrender.com
 
-To start the application, run:
-
+For deployment, the Gradio server is configured to listen on all interfaces and use the port provided by the hosting platform:
 ```bash
-python app/app.py
+    port = int(os.environ.get("PORT", 7860))
+
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=port
+    )
 ```
 
-This link can be opened from another computer or mobile device and allows remote access to the application. The public URL is temporary and remains active only while the application is running on the host computer. If the Python process is stopped, the terminal is closed, the computer is turned off, or the internet connection is lost, the link will no longer be available.
-When the application is started again, Gradio will generate a new temporary public URL.
+This allows the same application to run locally on port 7860 and on Render using the port assigned by the platform. The public Render URL remains the same between deployments. On the free Render plan, the service may enter an idle state after a period of inactivity, so the first request after inactivity can take longer to load.
+
