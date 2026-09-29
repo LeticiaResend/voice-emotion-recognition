@@ -105,5 +105,62 @@ matrix for that fold.
 - Class weighting uses sqrt-inverse-frequency (`class_weight_power=0.5` in
   both training scripts) -- tuned on fold 0 after raw inverse frequency
   over-predicted the rarest class (disgust).
-- **Not built yet**: the live recording web app (records your voice, shows
-  the spectrogram, predicts the emotion).
+- Live inference app: the application can record audio from the
+  microphone or accept an uploaded audio file, display its Mel-spectrogram,
+  and predict the emotion with class probabilities. The current app uses
+  Model 1 (`scratch_deploy.pt`).
+## Inference pipeline
+
+A dedicated inference pipeline was implemented in `src/predict.py` to use
+the trained model on new, unseen audio recordings.
+
+For each input audio file, the script:
+
+1. loads and resamples the audio using the same preprocessing used during training;
+2. fixes the signal to a 3-second window;
+3. computes the 64-band log-Mel spectrogram;
+4. applies the training mean and standard deviation stored in the checkpoint;
+5. loads the trained scratch CNN in evaluation mode;
+6. runs the model and applies softmax to obtain class probabilities;
+7. returns the predicted emotion, confidence score, and probabilities for all
+   seven emotion classes.
+
+The inference script can also be used independently of the web application:
+
+```bash
+python src/predict.py path/to/audio.wav
+```
+
+## Live web application
+
+The live application is implemented in `app/app.py` using Gradio.
+
+It provides two ways of supplying audio:
+
+- recording directly from the user's microphone;
+- uploading an existing audio file.
+
+After clicking **Analyze emotion**, the application:
+
+1. sends the recording to the inference pipeline;
+2. displays the predicted emotion and confidence;
+3. displays the probabilities for all seven emotion classes;
+4. generates and displays the corresponding Mel-spectrogram.
+
+Run the application locally with:
+
+```bash
+python app/app.py
+```
+## Temporary public link
+
+The web application uses Gradio with `share=True`, which generates a temporary public URL when the app is launched.
+
+To start the application, run:
+
+```bash
+python app/app.py
+```
+
+This link can be opened from another computer or mobile device and allows remote access to the application. The public URL is temporary and remains active only while the application is running on the host computer. If the Python process is stopped, the terminal is closed, the computer is turned off, or the internet connection is lost, the link will no longer be available.
+When the application is started again, Gradio will generate a new temporary public URL.
