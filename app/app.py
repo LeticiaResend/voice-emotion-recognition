@@ -4,6 +4,7 @@ import sys
 import gradio as gr
 import matplotlib.pyplot as plt
 import librosa.display
+import os
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -105,6 +106,10 @@ with gr.Blocks(title="Voice Emotion Recognition") as demo:
         ],
     )
 
-
 if __name__ == "__main__":
-    demo.launch(share=True)
+    port = int(os.environ.get("PORT", 7860))
+
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=port
+    )
