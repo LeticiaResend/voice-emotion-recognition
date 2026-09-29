@@ -215,18 +215,11 @@ The application will normally be available locally at:
 http://127.0.0.1:7860
 
 ## Permanent deployment
-The application is permanently deployed on Render and can be accessed at:
-https://voice-emotion-recognition-s92d.onrender.com
 
-For deployment, the Gradio server is configured to listen on all interfaces and use the port provided by the hosting platform:
-```bash
-    port = int(os.environ.get("PORT", 7860))
+The application is permanently deployed on Hugging Face Spaces and can be accessed at:
 
-    demo.launch(
-        server_name="0.0.0.0",
-        server_port=port
-    )
-```
+https://bibi724-voice-emotion-recognition.hf.space
 
-This allows the same application to run locally on port 7860 and on Render using the port assigned by the platform. The public Render URL remains the same between deployments. On the free Render plan, the service may enter an idle state after a period of inactivity, so the first request after inactivity can take longer to load.
+The application is deployed using Gradio on Hugging Face Spaces. The Space automatically installs the dependencies from `requirements.txt`, loads the trained CNN model, and launches the Gradio interface.
 
+The public application allows users to record or upload an audio file, visualize its Mel-spectrogram, and obtain the predicted emotion and class probabilities.
