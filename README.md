@@ -1,8 +1,54 @@
 
-The raw audio and the ResNet weights aren't tracked in this repo (see
-`.gitignore`) -- the corpus is licensed for research use, not
-redistribution, and the weights are a 45MB third-party file. Both are
-one command to fetch, below.
+# Voice Emotion Recognition — CNN project
+
+Speech emotion recognition system built for the 5RO11 course assignment at
+ENSTA Paris: two CNNs (one trained from scratch, one via transfer learning)
+that classify German speech recordings into one of seven emotions,
+evaluated on speakers never seen during training, with a live web app for
+real-time predictions from a recorded voice.
+
+**Authors:** Letícia Maria Resende, Beatriz Araujo Cavalcante — ENSTA Paris, 2026
+
+## Overview
+
+- **Task:** classify a short speech clip into one of 7 emotions (anger,
+  boredom, disgust, fear, happiness, neutral, sadness).
+- **Data:** EmoDB (Berlin Database of Emotional Speech), 535 clips, 10
+  German speakers.
+- **Models:** a 4-block CNN trained from scratch on mel-spectrograms
+  (Model 1), and a frozen ImageNet-pretrained ResNet-18 with a new
+  classification head (Model 2, transfer learning).
+- **Evaluation:** 5-fold leave-speakers-out cross-validation, so every
+  reported number comes from speakers the model never trained on.
+- **Demo:** a Gradio web app records or accepts an uploaded voice clip,
+  shows its mel-spectrogram, and predicts the emotion live.
+
+## What's here
+
+```
+data/
+  raw/emodb/wav/           535 EmoDB audio clips -- see "Get the data" below
+  processed/                generated metadata + fold definitions
+models/
+  resnet18-f37072fd.pth     see "Model 2 setup" below
+  scratch_deploy.pt         Model 1 checkpoint used by the live app
+  transfer_deploy.pt        Model 2 checkpoint (fold 0), kept for reference
+src/
+  paths.py                 central path config -- everything else imports from here
+  load_emodb.py            parses filenames -> data/processed/emodb_metadata.csv
+  make_splits.py           builds the 5-fold leave-speakers-out split -> emodb_folds.json
+  features.py               audio -> mel-spectrogram pipeline (shared by both models)
+  dataset.py                PyTorch Dataset for Model 1 (from-scratch CNN)
+  model_scratch.py          Model 1 architecture (4-block CNN, ~1.2M params)
+  train_scratch.py          trains + evaluates Model 1 on one fold
+  dataset_transfer.py       PyTorch Dataset for Model 2 (spectrogram -> pseudo-RGB image)
+  model_transfer.py         Model 2 architecture (frozen ResNet-18 + new head)
+  train_transfer.py         trains + evaluates Model 2 on one fold
+  aggregate_results.py      combines the 5 folds into overall metrics
+  predict.py                 inference pipeline: audio file -> predicted emotion
+app/
+  app.py                    Gradio web app (live demo)
+```
 
 ## Get the data
 
